@@ -9,12 +9,12 @@ echo 'up services...'
 docker-compose up -d
 
 echo "Waiting for MongoDB service to be healthy..."
-until [ "$(docker inspect --format='{{json .State.Health.Status}}' shopimax-dbv2)" == "\"healthy\"" ]; do
+until [ "$(docker inspect --format='{{json .State.Health.Status}}' mongodb)" == "\"healthy\"" ]; do
   sleep 2
 done
 
 echo "Configuring MongoDB replica set..."
-docker exec shopimax-dbv2 mongosh --quiet --eval '
+docker exec mongodb mongosh --quiet --eval '
 rs.initiate({
   _id: "rs0",
   members: [
@@ -24,7 +24,7 @@ rs.initiate({
 '
 
 echo "Reconfiguring MongoDB replica set to fix host..."
-docker exec shopimax-dbv2 mongosh --quiet --eval '
+docker exec mongodb mongosh --quiet --eval '
 cfg = rs.conf();
 cfg.members[0].host = "mongo:27017";
 rs.reconfig(cfg, { force: true });
