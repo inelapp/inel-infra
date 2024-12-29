@@ -18,7 +18,7 @@ docker exec mongodb mongosh --quiet --eval '
 rs.initiate({
   _id: "rs0",
   members: [
-    { _id: 0, host: "mongo:27017" }
+    { _id: 0, host: "mongodb:27017" }
   ]
 });
 '
@@ -26,7 +26,7 @@ rs.initiate({
 echo "Reconfiguring MongoDB replica set to fix host..."
 docker exec mongodb mongosh --quiet --eval '
 cfg = rs.conf();
-cfg.members[0].host = "mongo:27017";
+cfg.members[0].host = "mongodb:27017";
 rs.reconfig(cfg, { force: true });
 '
 
